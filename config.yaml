@@ -1,0 +1,41 @@
+system:
+  host: 0.0.0.0
+  port: 8080
+  env: release
+  router_prefix: api
+  use_multipoint: true
+  sessions_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  oss_type: local
+jwt:
+  access_token_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  refresh_token_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  access_token_expiry_time: 2h
+  refresh_token_expiry_time: 7d
+  issuer: CollabDoc-go
+mongodb:
+  host: localhost
+  port: 27017
+  username:
+  password:
+  database:
+  authSource: collabdoc
+  replicaSet: ""
+  ssl: false
+redis:
+  address: 127.0.0.1:6379
+  password: ""
+  db: 0
+email:
+  host: smtp.qq.com
+  port: 465
+  from: xxx@qq.com
+  nickname: 发件人昵称
+  secret: xxxxxxxxxxxxxxxx
+  is_ssl: true
+zap:
+  level: info
+  filename: log/CollabDoc-go.log
+  max_size: 200
+  max_backups: 30
+  max_age: 5
+  is_console_print: true

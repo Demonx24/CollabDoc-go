@@ -1,0 +1,34 @@
+#version: "3.8"
+#
+#services:
+#  onlyoffice-documentserver:
+#    image: onlyoffice/documentserver
+#    container_name: onlyoffice-documentserver
+#    restart: unless-stopped
+#    ports:
+#      - "8082:80"
+#    volumes:
+#      - E:\docker\onlyoffice\/opt/onlyoffice/Data:/var/www/onlyoffice/Data
+#      - E:\docker\onlyoffice\/opt/onlyoffice/Logs:/var/log/onlyoffice
+#    environment:
+#      - JWT_ENABLED=false
+
+version: "3.8"
+
+services:
+  onlyoffice-documentserver:
+    image: onlyoffice/documentserver
+    container_name: onlyoffice-documentserver
+    ports:
+      - "8082:80"
+    restart: unless-stopped
+    volumes:
+      - E:/docker/onlyoffice/onlyoffice-data:/var/www/onlyoffice/Data
+      - E:/docker/onlyoffice/onlyoffice-logs:/var/log/onlyoffice
+
+    environment:
+      - JWT_ENABLED=false  # 可选（保险起见）
+
+volumes:
+  onlyoffice-data:
+  onlyoffice-logs:

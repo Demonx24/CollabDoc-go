@@ -1,0 +1,16 @@
+{
+  "document": {
+    "fileType": "docx",
+    "key": "doc-example-123",
+    "title": "example.docx",
+    "url": "http://localhost:8081/example.docx"
+  },
+  "documentType": "text",
+  "editorConfig": {
+    "callbackUrl": "http://localhost:8081/callback",
+    "user": {
+      "id": "123",
+      "name": "测试用户"
+    }
+  }
+}
