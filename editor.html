@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8">
+    <title>ONLYOFFICE Demo</title>
+    <script type="text/javascript" src="http://localhost:8082/web-apps/apps/api/documents/api.js"></script>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        #header {
+            height: 50px;
+            background-color: #2b579a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        #header h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        #backBtn {
+            background: transparent;
+            color: white;
+            border: 1px solid white;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        #backBtn:hover {
+            background-color: white;
+            color: #2b579a;
+        }
+
+        #editor {
+            height: calc(100% - 50px); /* 剩余高度 */
+        }
+    </style>
+</head>
+<body>
+<div id="header">
+    <h1>编辑文档：示例文档.docx</h1>
+    <button id="backBtn" onclick="window.location.href='/'">返回首页</button>
+</div>
+
+<div id="editor"></div>
+
+<script>
+    var config = {
+        document: {
+            fileType: "docx",
+            key: "example-doc-001",
+            title: "示例文档.docx",
+            url: "http://host.docker.internal:8080/api/file/example.docx"
+        },
+        documentType: "text",
+        editorConfig: {
+            autosave: true,
+            mode: "edit",
+            callbackUrl: "http://host.docker.internal:8080/api/onlyoffice/callback",
+            user: {
+                id: "u1",
+                name: "张三"
+            },
+            permissions: {
+                edit: true,
+                download: true,
+                print: true,
+                review: true,
+                comment: true
+            },
+            lang: "zh-CN",
+            customization: {
+                forcesave: true,
+                chat: true,
+                comments: true,
+                compactHeader: false,
+                feedback: true,
+                help: true,
+                toolbarNoTabs: false,
+                hideRightMenu: false,
+                hideRuler: false,
+                hideToolbar: false,
+                hideFileMenu: false,
+                hideReviewTab: false,
+                showReviewChanges: true,
+                hideInsertTab: false,
+                hideHomeTab: false,
+                hideViewTab: false
+            }
+        }
+    };
+
+
+
+
+    var docEditor = new DocsAPI.DocEditor("editor", config);
+</script>
+</body>
+</html>

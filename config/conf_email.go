@@ -9,3 +9,13 @@ type Email struct {
 	Secret   string `json:"secret" yaml:"secret"`     // 发件人邮箱的密码或应用专用密码，用于身份验证
 	IsSSL    bool   `json:"is_ssl" yaml:"is_ssl"`     // 是否使用 SSL 加密连接，true 表示使用，false 表示不使用
 }
+
+// 谷歌邮箱
+type EmailGoogle struct {
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	From     string `yaml:"from"`
+	Nickname string `yaml:"nickname"`
+	Secret   string `yaml:"secret"`
+	IsSSL    bool   `yaml:"is_ssl"`
+}

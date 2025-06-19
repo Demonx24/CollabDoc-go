@@ -1,8 +1,8 @@
 package initialize
 
 import (
+	"CollabDoc-go/global"
 	"fmt"
-	"github.com/Demonx24/Vblog-backend/global"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"

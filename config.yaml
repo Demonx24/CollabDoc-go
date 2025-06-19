@@ -21,16 +21,27 @@ mongodb:
   authSource: collabdoc
   replicaSet: ""
   ssl: false
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  config: charset=utf8mb4&parseTime=True&loc=Local
+  db_name: collabdoc
+  username: root
+  password: 123456
+  max_idle_conns: 10
+  max_open_conns: 100
+  #默认info
+  log_mode: info
 redis:
   address: 127.0.0.1:6379
   password: ""
   db: 0
-email:
-  host: smtp.qq.com
-  port: 465
-  from: xxx@qq.com
-  nickname: 发件人昵称
-  secret: xxxxxxxxxxxxxxxx
+email_google:
+  host: smtp.gmail.com         # Gmail SMTP 服务器
+  port: 465                    # 使用 STARTTLS（推荐），或 465 用 SSL
+  from: linw05743@gmail.com   # 你的 Gmail 地址
+  nickname: 验证码服务          # 发件人昵称，可自定义
+  secret: wbqlbpcsujfgxtzv     # Gmail 的 App Password（应用专用密码）
   is_ssl: true
 zap:
   level: info
@@ -39,3 +50,32 @@ zap:
   max_backups: 30
   max_age: 5
   is_console_print: true
+upload:
+  size: 20
+  path: file
+captcha:
+  height: 80
+  width: 240
+  length: 6
+  max_skew: 0.7
+  dot_count: 80
+website:
+  logo: ""
+  full_logo: ""
+  title: 多人文档
+  slogan: 石坳多人文档
+  slogan_en: Blog Title
+  description: 博客描述
+  version: 1.0.0
+  created_at: "2025-1-15"
+  icp_filing: icp备案号
+  public_security_filing: 公安备案号
+  bilibili_url: https://space.bilibili.com/xxx
+  gitee_url: https://gitee.com/xxx
+  github_url: https://github.com/xxx/
+  name: wlc
+  job: 工作
+  address: 地址
+  email: xxx@qq.com
+  qq_image: ""
+  wechat_image: ""

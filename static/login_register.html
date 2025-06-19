@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <title>登录 / 注册</title>
+    <style>
+        body { font-family: sans-serif; margin: 40px; }
+        input { margin: 5px 0; width: 100%; padding: 8px; }
+        button { padding: 10px; margin-top: 10px; width: 100%; }
+        .form-box { max-width: 400px; margin: auto; }
+        .result { margin-top: 10px; padding: 10px; border: 1px solid #ccc; background: #f7f7f7; white-space: pre-wrap; font-family: monospace; }
+    </style>
+</head>
+<body>
+<div class="form-box">
+    <h2>登录</h2>
+    <form id="loginForm">
+        <input type="text" name="email" placeholder="邮箱" required />
+        <input type="password" name="password" placeholder="密码" required />
+        <button type="submit">登录</button>
+    </form>
+    <div id="loginResult" class="result"></div>
+
+    <hr />
+
+    <h2>注册</h2>
+    <form id="registerForm">
+        <input type="text" name="username" placeholder="用户名" required />
+        <input type="text" name="email" placeholder="邮箱" required />
+        <input type="password" name="password" placeholder="密码" required />
+        <input type="text" name="verification_code" placeholder="邮箱验证码" required />
+        <button type="button" onclick="sendCode()">发送验证码</button>
+        <button type="submit">注册</button>
+    </form>
+    <div id="registerResult" class="result"></div>
+
+    <h2>验证码发送</h2>
+    <div id="sendCodeResult" class="result"></div>
+</div>
+
+<script>
+    // 登录逻辑
+    document.getElementById('loginForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const form = new FormData(e.target);
+        const res = await fetch('/api/user/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                email: form.get('email'),
+                password: form.get('password'),
+            }),
+            headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        document.getElementById('loginResult').textContent = JSON.stringify(data, null, 2);
+    };
+
+    // 注册逻辑
+    document.getElementById('registerForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const form = new FormData(e.target);
+        const res = await fetch('/api/user/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                username: form.get('username'),
+                email: form.get('email'),
+                password: form.get('password'),
+                verification_code: form.get('verification_code'),
+            }),
+            headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        document.getElementById('registerResult').textContent = JSON.stringify(data, null, 2);
+    };
+
+    // 发送邮箱验证码
+    async function sendCode() {
+        const email = document.querySelector('#registerForm input[name="email"]').value;
+        if (!email) return alert('请输入邮箱');
+        const res = await fetch('/api/base/sendEmailVerificationCode', {
+            method: 'POST',
+            body: JSON.stringify({ email }),
+            headers: { 'Content-Type': 'application/json' },
+        });
+        const data = await res.json();
+        document.getElementById('sendCodeResult').textContent = JSON.stringify(data, null, 2);
+    }
+</script>
+
+</body>
+</html>
