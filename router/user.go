@@ -18,7 +18,7 @@ func (u *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	//{
 	//	userRouter.POST("logout", userApi.Logout)
 	//	userRouter.PUT("resetPassword", userApi.UserResetPassword)
-	//	userRouter.GET("info", userApi.UserInfo)
+	userRouter.GET("info", userApi.UserInfo)
 	//	userRouter.PUT("changeInfo", userApi.UserChangeInfo)
 	//	userRouter.GET("weather", userApi.UserWeather)
 	//	userRouter.GET("chart", userApi.UserChart)
@@ -28,8 +28,10 @@ func (u *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 	//	userPublicRouter.GET("card", userApi.UserCard)
 	//}
 	{
+		userRouter.POST("emaillogin", userApi.EmailLogin)
 		userRouter.POST("register", userApi.Register)
 		userRouter.POST("login", userApi.Login)
+		userRouter.GET("codes", userApi.Codes)
 	}
 	//{
 	//	userAdminRouter.GET("list", userApi.UserList)

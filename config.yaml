@@ -1,3 +1,9 @@
+MinIO:
+  endpoint: x
+  accessKeyID: x
+  secretAccessKey: x
+  useSSL: false
+  bucket: collabdoc
 system:
   host: 0.0.0.0
   port: 8080
@@ -37,11 +43,11 @@ redis:
   password: ""
   db: 0
 email_google:
-  host: smtp.gmail.com         # Gmail SMTP 服务器
+  host: smtp.qq.com         # Gmail SMTP 服务器
   port: 465                    # 使用 STARTTLS（推荐），或 465 用 SSL
-  from: linw05743@gmail.com   # 你的 Gmail 地址
+  from: 2601387733@qq.com   # 你的 Gmail 地址
   nickname: 验证码服务          # 发件人昵称，可自定义
-  secret: wbqlbpcsujfgxtzv     # Gmail 的 App Password（应用专用密码）
+  secret: majvipotsoaxdhib     # Gmail 的 App Password（应用专用密码）
   is_ssl: true
 zap:
   level: info
@@ -52,7 +58,7 @@ zap:
   is_console_print: true
 upload:
   size: 20
-  path: file
+  path: /file
 captcha:
   height: 80
   width: 240

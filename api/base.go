@@ -51,15 +51,17 @@ func (baseApi *BaseApi) SendEmailVerificationCode(c *gin.Context) {
 		response.FailWithMessage(err.Error(), c)
 		return
 	}
-	//if store.Verify(req.CaptchaID, req.Captcha, true) {
-	err = baseService.SendEmailVerificationCode(c, req.Email)
-	if err != nil {
-		global.Log.Error("Failed to send email:", zap.Error(err))
-		response.FailWithMessage("Failed to send email", c)
+	global.Log.Info("Captcha verify input", zap.String("captchaId", req.CaptchaID), zap.String("captcha", req.Captcha))
+
+	if store.Verify(req.CaptchaID, req.Captcha, true) {
+		err = baseService.SendEmailVerificationCode(c, req.Email)
+		if err != nil {
+			global.Log.Error("Failed to send email:", zap.Error(err))
+			response.FailWithMessage("Failed to send email", c)
+			return
+		}
+		response.OkWithMessage("Successfully sent email", c)
 		return
 	}
-	response.OkWithMessage("Successfully sent email", c)
-	return
-	//}
 	response.FailWithMessage("Incorrect verification code", c)
 }

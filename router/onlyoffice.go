@@ -12,6 +12,7 @@ func (r *OnlyofficeRouter) InitOnlyOfficeRouter(Router *gin.RouterGroup) {
 	commentApi := api.ApiGroupApp.OnlyofficeApi
 	{
 
-		commentRouter.POST("/callback", commentApi.Callback)
+		commentRouter.POST("callback", commentApi.Callback)
+		commentRouter.GET("config", commentApi.GetConfig)
 	}
 }

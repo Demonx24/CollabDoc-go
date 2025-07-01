@@ -12,4 +12,5 @@ type Config struct {
 	Captcha     Captcha     `json:"captcha" yaml:"captcha"`
 	EmailGoogle EmailGoogle `json:"email_google" yaml:"email_google"`
 	Website     Website     `json:"website" yaml:"website"`
+	Minio       Minio       `json:"minio" yaml:"MinIO"`
 }

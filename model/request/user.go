@@ -4,7 +4,7 @@ type Register struct {
 	Username         string `json:"username" binding:"required,max=20"`
 	Password         string `json:"password" binding:"required,min=8,max=16"`
 	Email            string `json:"email" binding:"required,email"`
-	VerificationCode string `json:"verification_code" binding:"required,len=6"`
+	VerificationCode string `json:"verifyCode" binding:"required,len=6"`
 }
 
 type Login struct {
@@ -14,6 +14,13 @@ type Login struct {
 	CaptchaID string `json:"captcha_id" binding:"required"`
 }
 
+type RegisterRequest struct {
+	Username      string `json:"username" binding:"required"`
+	Password      string `json:"password" binding:"required"`
+	Captcha       bool   `json:"captcha"`       // 如果是图形验证码，建议改成 string 类型
+	SelectAccount string `json:"selectAccount"` // 仅前端辅助字段，可忽略
+}
+
 type ForgotPassword struct {
 	Email            string `json:"email" binding:"required,email"`
 	VerificationCode string `json:"verification_code" binding:"required,len=6"`
@@ -21,7 +28,7 @@ type ForgotPassword struct {
 }
 
 type UserCard struct {
-	UUID string `json:"uuid" form:"uuid" binding:"required"`
+	UUID string `json:"uuid" form:"uuid" binding:"required,uuid"`
 }
 
 type UserResetPassword struct {

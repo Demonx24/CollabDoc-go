@@ -18,7 +18,7 @@ func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.Env)
 	Router := gin.Default()
 	Router.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:8080"},
+		AllowOrigins:     []string{"*"},
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "Token", "Lang", "X-Requested-With"},
 		AllowCredentials: true,
@@ -30,6 +30,7 @@ func InitRouter() *gin.Engine {
 	Router.Use(sessions.Sessions("session", store))
 	//静态网页
 	Router.Static("/static", "./static")
+
 	// 将指定目录下的文件提供给客户端
 	// "uploads" 是URL路径前缀，http.Dir("uploads")是实际文件系统中存储文件的目录
 	Router.Static(global.Config.Upload.Path, "."+global.Config.Upload.Path)
@@ -40,6 +41,10 @@ func InitRouter() *gin.Engine {
 	//
 	publicGroup := Router.Group(global.Config.System.RouterPrefix)
 	//
+
+	routerGroup.InitRouterRouter(publicGroup)
+	routerGroup.InitFileRouter(publicGroup)
+	routerGroup.InitDocumentRouter(publicGroup)
 	routerGroup.InitOnlyOfficeRouter(publicGroup)
 	routerGroup.InitBaseRouter(publicGroup)
 	routerGroup.InitUserRouter(publicGroup)

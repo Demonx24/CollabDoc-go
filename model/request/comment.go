@@ -23,3 +23,9 @@ type CommentList struct {
 	Content   *string `json:"content" form:"content"`
 	PageInfo
 }
+type FilePath struct {
+	OwnerID string `gorm:"not null" json:"owner_id" form:"owner_id"`
+	DocUUID string `gorm:"type:char(36);uniqueIndex;not null" json:"doc_uuid" form:"doc_uuid"`
+	ID      uint   `form:"id" json:"id" gorm:"primarykey"` // 主键 ID
+	Ext     string `form:"ext" json:"ext" binding:"required,max=32"`
+}

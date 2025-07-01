@@ -10,7 +10,8 @@ func main() {
 	global.Config = core.InitConf()
 	global.Log = core.InitLogger()
 	global.DB = initialize.InitGorm()
-	//global.Redis = initialize.ConnectRedis()
+	global.Redis = initialize.ConnectRedis()
+	global.Minio = initialize.InitMinio()
 
 	defer global.Redis.Close()
 
