@@ -1,7 +1,7 @@
 MinIO:
-  endpoint: x
-  accessKeyID: x
-  secretAccessKey: x
+  endpoint: 111.230.103.165:9000
+  accessKeyID: minioadmin
+  secretAccessKey: wlc7316.
   useSSL: false
   bucket: collabdoc
 system:
@@ -23,10 +23,12 @@ mongodb:
   port: 27017
   username:
   password:
-  database:
-  authSource: collabdoc
+  database: collabdoc
+  authSource:
   replicaSet: ""
   ssl: false
+  enabled: true
+
 mysql:
   host: 127.0.0.1
   port: 3306
@@ -85,3 +87,12 @@ website:
   email: xxx@qq.com
   qq_image: ""
   wechat_image: ""
+kafka:
+  enabled: true
+  brokers:
+    - localhost:9092   # 这里写宿主机地址，和 Kafka 广播地址一致
+  topic_prefix: collabdoc
+  diff_topic: collabdoc-diff
+  consumer_group: collabdoc-group
+  username: ""
+  password: ""

@@ -23,3 +23,8 @@ type UpdateDocument struct {
 type GetVersions struct {
 	DocumentID uint `gorm:"not null" json:"document_id"form:"document_id"`
 }
+type GetDiff struct {
+	DocUUID string `gorm:"type:char(36);uniqueIndex;not null" json:"doc_uuid" form:"doc_uuid"`
+	FromVer int    `gorm:"size:255;not null" json:"from_ver" form:"from"`
+	ToVer   int    `gorm:"size:255;not null" json:"to_ver"form:"to"`
+}

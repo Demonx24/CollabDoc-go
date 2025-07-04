@@ -3,6 +3,8 @@ package service
 import (
 	"CollabDoc-go/global"
 	"CollabDoc-go/model/database"
+	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
@@ -10,6 +12,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strconv"
 	"time"
 )
 
@@ -160,4 +163,83 @@ func (documentService *DocumentService) GetDocument(documnet database.User_Docum
 		return database.User_Documents{}, errors.New("查询id失败")
 	}
 	return documnet, nil
+}
+
+func (documentService *DocumentService) GetPublicDoc(docUUID string) (database.User_Documents, error) {
+	cacheKey := "public_doc:" + docUUID
+	ctx := context.Background()
+	// 先查缓存
+	val, err := global.Redis.Get(ctx, cacheKey).Result()
+	if err == nil {
+		var doc database.User_Documents
+		if err := json.Unmarshal([]byte(val), &doc); err == nil {
+			return doc, nil
+		}
+		// 解析失败走数据库
+	}
+
+	// 缓存未命中或解析失败，从数据库查
+	doc, err := documentService.GetUUIdDocument(docUUID)
+	if err != nil {
+		return doc, err
+	}
+
+	// 写缓存（异步也行）
+	data, _ := json.Marshal(doc)
+	_ = global.Redis.Set(ctx, cacheKey, data, time.Minute*10).Err()
+
+	return doc, nil
+}
+func (documentService *DocumentService) GetUUIDByIDWithCache(id uint) (string, error) {
+	ctx := context.Background()
+	cacheKeyIDToUUID := fmt.Sprintf("doc_id:%d", id)
+
+	// 先查 id->uuid 缓存
+	if val, err := global.Redis.Get(ctx, cacheKeyIDToUUID).Result(); err == nil {
+		return val, nil
+	}
+
+	// 缓存没命中，从数据库查 uuid
+	var doc database.User_Documents
+	err := global.DB.Select("doc_uuid").First(&doc, id).Error
+	if err != nil {
+		return "", err
+	}
+
+	// 写缓存，设置过期时间，比如1小时
+	_ = global.Redis.Set(ctx, cacheKeyIDToUUID, doc.DocUUID, time.Hour).Err()
+
+	// 同时写 uuid->id 缓存（方便反向查找）
+	cacheKeyUUIDToID := fmt.Sprintf("doc_uuid:%s", doc.DocUUID)
+	_ = global.Redis.Set(ctx, cacheKeyUUIDToID, id, time.Hour).Err()
+
+	return doc.DocUUID, nil
+}
+
+// 类似反向查 id 的函数
+func (documentService *DocumentService) GetIDByUUIDWithCache(uuid string) (uint, error) {
+	ctx := context.Background()
+	cacheKeyUUIDToID := fmt.Sprintf("doc_uuid:%s", uuid)
+
+	// 查 uuid->id 缓存
+	if val, err := global.Redis.Get(ctx, cacheKeyUUIDToID).Result(); err == nil {
+		id, err := strconv.ParseUint(val, 10, 64)
+		if err == nil {
+			return uint(id), nil
+		}
+	}
+
+	// 缓存没命中，查数据库
+	var doc database.User_Documents
+	err := global.DB.Select("id").Where("doc_uuid = ?", uuid).First(&doc).Error
+	if err != nil {
+		return 0, err
+	}
+
+	// 写缓存
+	cacheKeyIDToUUID := fmt.Sprintf("doc_id:%d", doc.ID)
+	_ = global.Redis.Set(ctx, cacheKeyUUIDToID, doc.ID, time.Hour).Err()
+	_ = global.Redis.Set(ctx, cacheKeyIDToUUID, uuid, time.Hour).Err()
+
+	return doc.ID, nil
 }

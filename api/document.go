@@ -6,6 +6,8 @@ import (
 	"CollabDoc-go/model/request"
 	"CollabDoc-go/model/response"
 	"CollabDoc-go/utils"
+	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
@@ -131,4 +133,36 @@ func (api *DocumentApi) GetVersions(c *gin.Context) {
 
 	// 4. 返回给前端
 	response.OkWithData(versions, c)
+}
+
+// 获取文档差异
+func (api *DocumentApi) GetDiff(c *gin.Context) {
+	var req request.GetDiff
+	if err := c.ShouldBindQuery(&req); err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+	// 查询 Mongo 是否已有缓存
+	diff, err := mongoService.GetCachedDocDiff(req.DocUUID, req.FromVer, req.ToVer)
+	if err == nil && diff != nil {
+		//  有缓存，直接返回
+		fmt.Println("正在从mongo中拿数据")
+		response.OkWithData(diff, c)
+		return
+	}
+	fmt.Println("没有从mongo中拿数据")
+	//  没有缓存，异步推送任务
+	task := database.DiffMessage{
+		DocUUID:     req.DocUUID,
+		FromVersion: req.FromVer,
+		ToVersion:   req.ToVer,
+	}
+	taskJson, _ := json.Marshal(task)
+	err = kafkaService.SendKafkaMessage(global.Config.Kafka.DiffTopic, req.DocUUID, string(taskJson))
+	if err != nil {
+		response.FailWithMessage("任务派发失败", c)
+		return
+	}
+
+	response.OkWithMessage("正在生成差异，请稍后刷新", c)
 }

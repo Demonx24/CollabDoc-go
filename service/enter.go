@@ -7,6 +7,9 @@ type ServiceGroup struct {
 	DocumentService
 	Document_vService
 	MinioService
+	KafkaService
+	MongoService
+	EditLogService
 }
 
 var ServiceGroupApp = new(ServiceGroup)

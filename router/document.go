@@ -19,5 +19,6 @@ func (b *BaseRouter) InitDocumentRouter(Router *gin.RouterGroup) {
 		baseRouter.PUT("update", documentApi.UpdateDocument)
 		baseRouter.GET("public", documentApi.GetPublicDocuments)
 		baseRouter.GET("getversions", documentApi.GetVersions)
+		baseRouter.GET("diff", documentApi.GetDiff)
 	}
 }

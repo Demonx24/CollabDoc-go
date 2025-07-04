@@ -2,6 +2,7 @@ package global
 
 import (
 	"CollabDoc-go/config"
+	"github.com/Shopify/sarama"
 	"github.com/go-redis/redis/v8"
 	"github.com/minio/minio-go/v7"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -19,4 +20,5 @@ var (
 	BlackCache local_cache.Cache
 	Mongo      *mongo.Client
 	Minio      *minio.Client
+	Kafka      sarama.SyncProducer
 )

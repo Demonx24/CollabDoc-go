@@ -31,23 +31,28 @@ func (onlyofficeApi *OnlyofficeApi) Callback(c *gin.Context) {
 	}
 	log.Printf(" 接收到文档回调（status=%d）：%s\n", req.Status, req.Key)
 	var doc_version database.DocumentVersion
-
+	var editlog database.DocumentEditLog
 	//截取docuuid和版本号
 	docuuid, _, err := utils.GetVersionFromDocKey(req.Key)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 	}
-	doc, err := documentService.GetUUIdDocument(docuuid)
+	//获取文档信息
+	doc, err := documentService.GetPublicDoc(docuuid)
 	if err != nil {
 		response.FailWithMessage(err.Error(), c)
 	}
-
+	//获取最新版本号
 	latestVersion, err := documnet_vService.GetLatestVersionNumber(doc.ID)
 	if err != nil {
 		response.FailWithMessage("获取当前版本号失败", c)
 		return
 	}
-
+	//保存编辑人信息
+	editlog.UserUUID = doc.OwnerID
+	editlog.DocumentUUID = doc.DocUUID
+	editlog.CreatedAt = time.Now()
+	editlog.VersionNumber = int(latestVersion + 1)
 	//保存文档版本信息
 	doc_version.VersionNumber = latestVersion + 1
 	doc_version.CreatedAt = time.Now()
@@ -56,11 +61,18 @@ func (onlyofficeApi *OnlyofficeApi) Callback(c *gin.Context) {
 	doc_version.VersionName = fmt.Sprintf("%s-V%d", doc.Title, doc_version.VersionNumber)
 
 	if req.Status == 2 {
+
 		timestamp := time.Now().Format("20060102_150405")
 		filename := fmt.Sprintf("%s_%s.%s", req.Key, timestamp, req.FileType)
 		savePath := path.Join("saved", filename)
 		doc_version.FilePath = savePath
+		//存入版本信息
 		doc_version, err = documnet_vService.Createdoc_v(doc_version)
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+		}
+		//存入编辑人信息
+		err = editlogService.CreateEditLog(&editlog)
 		if err != nil {
 			response.FailWithMessage(err.Error(), c)
 		}
@@ -92,7 +104,10 @@ func (onlyofficeApi *OnlyofficeApi) Callback(c *gin.Context) {
 		}
 		// 修复 URL 中的 \u0026
 		req.URL = strings.ReplaceAll(req.URL, `\u0026`, `&`)
-
+		err = editlogService.CreateEditLog(&editlog)
+		if err != nil {
+			response.FailWithMessage(err.Error(), c)
+		}
 		go func() {
 			err := utils.UploadFromURLToMinio(req.URL, savePath)
 			if err != nil {

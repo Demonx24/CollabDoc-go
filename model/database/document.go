@@ -2,6 +2,7 @@ package database
 
 import (
 	"CollabDoc-go/global"
+	"time"
 )
 
 // Document 文档表
@@ -38,14 +39,21 @@ type DocumentPermission struct {
 	Permission string `gorm:"type:enum('owner','edit','view');not null" json:"permission"`
 }
 
-// EditLog 编辑日志表
-type EditLog struct {
-	global.MODEL
-	DocumentID uint   `gorm:"not null" json:"document_id"`
-	UserID     uint   `gorm:"not null" json:"user_id"`
-	Action     string `gorm:"size:64;not null" json:"action"`
-	WordCount  int    `json:"word_count"`
-	// CreatedAt 用 global.MODEL 的 CreatedAt
+type DocDiff struct {
+	DocUUID       string                 `bson:"doc_uuid"`
+	FromVersion   int                    `bson:"from_version"`
+	ToVersion     int                    `bson:"to_version"`
+	ChangedFields map[string]interface{} `bson:"changed_fields"` // 差异内容
+	CreatedAt     time.Time              `bson:"created_at"`
+}
+type DiffMessage struct {
+	DocUUID     string `json:"doc_uuid"`
+	FromVersion int    `json:"from_version"`
+	ToVersion   int    `json:"to_version"`
+}
+type DiffItem struct {
+	Operation string `json:"operation"` // "INSERT", "DELETE", "EQUAL"
+	Text      string `json:"text"`
 }
 
 // 表名：documents
@@ -61,9 +69,4 @@ func (DocumentVersion) TableName() string {
 // 表名：document_permissions
 func (DocumentPermission) TableName() string {
 	return "document_permissions"
-}
-
-// 表名：edit_logs
-func (EditLog) TableName() string {
-	return "edit_logs"
 }
