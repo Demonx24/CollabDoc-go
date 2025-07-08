@@ -10,11 +10,11 @@ system:
   env: release
   router_prefix: api
   use_multipoint: true
-  sessions_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  sessions_secret: 2547755750
   oss_type: local
 jwt:
-  access_token_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-  refresh_token_secret: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+  access_token_secret: 2547755750
+  refresh_token_secret: 2547755750
   access_token_expiry_time: 2h
   refresh_token_expiry_time: 7d
   issuer: CollabDoc-go

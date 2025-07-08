@@ -11,6 +11,7 @@ func main() {
 	ctx := context.Background()
 	global.Config = core.InitConf()
 	global.Log = core.InitLogger()
+	initialize.OtherInit()
 	global.DB = initialize.InitGorm()
 	global.Redis = initialize.ConnectRedis()
 	global.Minio = initialize.InitMinio()

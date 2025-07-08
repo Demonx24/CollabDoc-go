@@ -91,6 +91,8 @@ func CopyTemplateFileToMinIO(docType, userUUID string, documentID uint, document
 		templateFile = "templates/template.pptx"
 	case "xlsx":
 		templateFile = "templates/template.xlsx"
+	case "md":
+		templateFile = "templates/template.md"
 	default:
 		return "", fmt.Errorf("unsupported document type: %s", docType)
 	}

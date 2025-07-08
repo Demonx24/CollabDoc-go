@@ -9,6 +9,8 @@ type ApiGroup struct {
 	RouterApi
 	DocumentApi
 	FileApi
+
+	//WebsocketApi
 }
 
 var ApiGroupApp = new(ApiGroup)
@@ -21,3 +23,5 @@ var minioService = service.ServiceGroupApp.MinioService
 var kafkaService = service.ServiceGroupApp.KafkaService
 var mongoService = service.ServiceGroupApp.MongoService
 var editlogService = service.ServiceGroupApp.EditLogService
+var jwtService = service.ServiceGroupApp.JwtService
+var DocumentRoom = service.ServiceGroupApp.DocumentRoom

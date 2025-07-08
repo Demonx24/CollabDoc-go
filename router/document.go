@@ -20,5 +20,6 @@ func (b *BaseRouter) InitDocumentRouter(Router *gin.RouterGroup) {
 		baseRouter.GET("public", documentApi.GetPublicDocuments)
 		baseRouter.GET("getversions", documentApi.GetVersions)
 		baseRouter.GET("diff", documentApi.GetDiff)
+		baseRouter.GET("getmd", documentApi.GetRecommendDocumentsByUserUUID)
 	}
 }

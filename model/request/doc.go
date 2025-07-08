@@ -5,7 +5,7 @@ import "time"
 type CreateDocRequest struct {
 	UserUUID string `json:"owner_id" binding:"required"`
 	Title    string `json:"title" binding:"required"`
-	DocType  string `json:"doc_type" binding:"required,oneof=docx pptx xlsx"`
+	DocType  string `json:"doc_type" binding:"required,oneof=docx pptx xlsx md"`
 }
 
 type DocumentByUserRequest struct {

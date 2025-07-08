@@ -32,6 +32,7 @@ func (u *UserRouter) InitUserRouter(Router *gin.RouterGroup) {
 		userRouter.POST("register", userApi.Register)
 		userRouter.POST("login", userApi.Login)
 		userRouter.GET("codes", userApi.Codes)
+		userRouter.POST("logout", userApi.Logout)
 	}
 	//{
 	//	userAdminRouter.GET("list", userApi.UserList)

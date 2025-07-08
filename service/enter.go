@@ -10,6 +10,8 @@ type ServiceGroup struct {
 	KafkaService
 	MongoService
 	EditLogService
+	DocumentRoom
+	JwtService
 }
 
 var ServiceGroupApp = new(ServiceGroup)

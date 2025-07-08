@@ -41,12 +41,15 @@ func InitRouter() *gin.Engine {
 	//
 	publicGroup := Router.Group(global.Config.System.RouterPrefix)
 	//
-
+	{
+		routerGroup.InitBaseRouter(publicGroup)
+	}
+	routerGroup.InitWebsocketRouter(publicGroup)
 	routerGroup.InitRouterRouter(publicGroup)
 	routerGroup.InitFileRouter(publicGroup)
 	routerGroup.InitDocumentRouter(publicGroup)
 	routerGroup.InitOnlyOfficeRouter(publicGroup)
-	routerGroup.InitBaseRouter(publicGroup)
+
 	routerGroup.InitUserRouter(publicGroup)
 	for _, route := range Router.Routes() {
 		fmt.Println(route.Method, route.Path)

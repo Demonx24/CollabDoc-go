@@ -30,6 +30,60 @@ func (api *DocumentApi) CreateDocumentByUserUUid(c *gin.Context) {
 
 	response.OkWithData(response.CreateDocResponse{Document: *doc}, c)
 }
+func (api *DocumentApi) GetRecommendDocumentsByUserUUID(c *gin.Context) {
+	var req request.UserCard
+	if err := c.ShouldBindQuery(&req); err != nil {
+		response.FailWithMessage("请求参数错误", c)
+		return
+	}
+
+	// 获取用户自己的文档
+	docs, err := documentService.GetUserDocument(req.UUID)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	// 筛选 DocType 为 md 的情况
+	hasMarkdown := false
+	for _, doc := range docs {
+		if doc.DocType == "md" {
+			hasMarkdown = true
+			break
+		}
+	}
+
+	// 如果没有 Markdown 文档，不推荐
+	if !hasMarkdown {
+		response.OkWithData([]response.GetDocResponse{}, c)
+		return
+	}
+
+	// 获取推荐 Markdown 文档（例如公开的、状态正常的）
+	recommendDocs, err := documentService.GetUserMarkdownDocs(req.UUID)
+	if err != nil {
+		response.FailWithMessage(err.Error(), c)
+		return
+	}
+
+	var cards []response.GetDocResponse
+	for _, d := range recommendDocs {
+		card := response.GetDocResponse{
+			ID:       d.ID,
+			DocUUID:  d.DocUUID,
+			Title:    d.Title,
+			DocType:  d.DocType,
+			Status:   d.Status,
+			IsPublic: *d.IsPublic,
+			Summary:  truncateDescription(d.Description, 80),
+			Updated:  d.UpdatedAt.Format("2006-01-02 15:04"),
+		}
+		cards = append(cards, card)
+	}
+
+	response.OkWithData(cards, c)
+}
+
 func (api *DocumentApi) GetDocumentByUserUUId(c *gin.Context) {
 	var req request.UserCard
 	if err := c.ShouldBindQuery(&req); err != nil {

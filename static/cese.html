@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>多人文档测试</title>
+    <style>
+        #editor {
+            width: 100%;
+            height: 300px;
+            font-size: 16px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+<textarea id="editor" placeholder="连接后开始编辑..." disabled></textarea>
+
+<script>
+    const docId = "testdoc1"; // 文档ID，可动态传入
+    const ws = new WebSocket(`ws://localhost:8080/api/ws?docId=${docId}`);
+
+    const editor = document.getElementById("editor");
+
+    let currentVersion = 0;
+    let canSend = false;  // 是否允许发送编辑操作
+
+    // 接收服务器消息
+    ws.onmessage = (event) => {
+        const op = JSON.parse(event.data);
+
+        if (op.type === "sync") {
+            // 收到同步操作，重置文本和版本号
+            editor.value = op.text;
+            currentVersion = op.version;
+
+            // 解锁编辑，允许发送操作
+            canSend = true;
+            editor.disabled = false;
+            console.log("同步完成，文档版本:", currentVersion);
+            return;
+        }
+
+        if (op.type === "insert" || op.type === "delete") {
+            // 这里你可以根据实际 OT 算法，局部更新 editor.value
+            // 简化起见直接整体替换
+            editor.value = op.text;
+            currentVersion = op.version;
+            console.log(`收到操作: ${op.type}, 版本: ${currentVersion}`);
+        }
+    };
+
+    ws.onopen = () => {
+        console.log("WebSocket 已连接，等待同步");
+    };
+
+    ws.onerror = (e) => {
+        console.error("WebSocket 错误:", e);
+    };
+
+    ws.onclose = () => {
+        console.log("WebSocket 连接关闭");
+        canSend = false;
+        editor.disabled = true;
+    };
+
+    // 监听编辑事件，发送操作给服务器
+    editor.addEventListener("input", (e) => {
+        if (!canSend) {
+            console.warn("等待同步完成，暂不能发送操作");
+            return;
+        }
+
+        // 简单示例：发送完整文本作为插入操作，版本号为当前+1
+        const newText = editor.value;
+
+        const op = {
+            userId: "testuser",
+            type: "insert", // 简化为insert类型
+            position: 0,
+            text: newText,
+            version: currentVersion + 1,
+            time: new Date().toISOString(),
+        };
+
+        ws.send(JSON.stringify(op));
+        // 这里乐观更新版本号，后续可按需求调整
+        currentVersion++;
+        console.log("发送操作，版本号:", currentVersion);
+    });
+</script>
+</body>
+</html>

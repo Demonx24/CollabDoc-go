@@ -6,6 +6,7 @@ type RouterGroup struct {
 	UserRouter
 	RouterRouter
 	FileRouter
+	WebsocketRouter
 }
 
 var RouterGroupApp = new(RouterGroup)

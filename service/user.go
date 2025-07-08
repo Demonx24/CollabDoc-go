@@ -4,7 +4,9 @@ import (
 	"CollabDoc-go/global"
 	"CollabDoc-go/model/database"
 	"CollabDoc-go/utils"
+	"context"
 	"errors"
+	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
 	"gorm.io/gorm"
 	"time"
@@ -13,6 +15,13 @@ import (
 type UserService struct {
 }
 
+func (userService *UserService) Logout(c *gin.Context) {
+	uuid := utils.GetUUID(c)
+	jwtStr := utils.GetRefreshToken(c)
+	utils.ClearRefreshToken(c)
+	global.Redis.Del(context.Background(), uuid.String())
+	_ = ServiceGroupApp.JwtService.JoinInBlacklist(database.JwtBlacklist{Jwt: jwtStr})
+}
 func (userService *UserService) Register(user database.User) (database.User, error) {
 	if !errors.Is(global.DB.Where("email = ?", user.Email).First(&database.User{}).Error, gorm.ErrRecordNotFound) {
 		return database.User{}, errors.New("this email address is already registered, please check the information you filled in, or retrieve your password")
@@ -21,11 +30,8 @@ func (userService *UserService) Register(user database.User) (database.User, err
 	user.Password = utils.BcryptHash(user.Password)
 	user.UUID = uuid.Must(uuid.NewV4())
 	user.Avatar = "https://avatars.githubusercontent.com/u/132669442"
-	user.Roles = database.JSONStringList{"commom"}
+	user.Roles = database.JSONStringList{"common"}
 	user.Permissions = database.JSONStringList{"*:*:*"}
-	//先写死
-	user.AccessToken = uuid.Must(uuid.NewV4()).String()
-	user.RefreshToken = uuid.Must(uuid.NewV4()).String()
 	t := time.Date(2030, time.October, 30, 0, 0, 0, 0, time.Local)
 	pt := &t
 	user.Expires = pt

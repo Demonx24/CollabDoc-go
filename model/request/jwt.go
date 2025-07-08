@@ -1,8 +1,6 @@
 package request
 
 import (
-	"CollabDoc-go/model/appTypes"
-
 	"github.com/gofrs/uuid"
 	jwt "github.com/golang-jwt/jwt/v4"
 )
@@ -21,7 +19,8 @@ type JwtCustomRefreshClaims struct {
 
 // BaseClaims 结构体用于存储基本的用户信息，作为JWT的Claim部分
 type BaseClaims struct {
-	UserID uint            // 用户ID，标识用户唯一性
-	UUID   uuid.UUID       // 用户的UUID，唯一标识用户
-	RoleID appTypes.RoleID // 用户角色ID，表示用户的权限级别
+	UserID uint           // 用户ID，标识用户唯一性
+	UUID   uuid.UUID      // 用户的UUID，唯一标识用户
+	RoleID JSONStringList // 用户角色ID，表示用户的权限级别
 }
+type JSONStringList []string

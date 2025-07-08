@@ -37,10 +37,9 @@ func (routerApi *RouterApi) Router(c *gin.Context) {
 	}
 
 	// 打印所有菜单ID及parent_id，确认数据关系
-	fmt.Println("数据库中路由数据:")
-	for _, m := range all {
-		fmt.Printf("ID=%d, ParentID=%d, Path=%s, Name=%s\n", m.ID, m.ParentID, m.Path, m.Name)
-	}
+	//for _, m := range all {
+	//	fmt.Printf("ID=%d, ParentID=%d, Path=%s, Name=%s\n", m.ID, m.ParentID, m.Path, m.Name)
+	//}
 
 	// 按 parent_id 分组，方便递归构建树
 	groups := make(map[int][]database.RouteMenu)
@@ -48,14 +47,11 @@ func (routerApi *RouterApi) Router(c *gin.Context) {
 		groups[m.ParentID] = append(groups[m.ParentID], m)
 	}
 
-	fmt.Printf("分组后菜单数量: %d\n", len(groups))
-
 	// 递归构建树形结构函数
 	var build func(pid int) []database.Route
 	build = func(pid int) []database.Route {
 		var list []database.Route
 		childrenMenus := groups[pid]
-		fmt.Printf("构建parent_id=%d的子菜单数量=%d\n", pid, len(childrenMenus))
 
 		for _, m := range childrenMenus {
 			// 解析 roles JSON
@@ -93,8 +89,6 @@ func (routerApi *RouterApi) Router(c *gin.Context) {
 				node.Meta.FrameSrc = m.FrameSrc
 			}
 
-			fmt.Printf("添加路由: Path=%s, Name=%s, 子菜单数量=%d\n", node.Path, node.Name, len(node.Children))
-
 			list = append(list, node)
 		}
 		return list
@@ -107,7 +101,6 @@ func (routerApi *RouterApi) Router(c *gin.Context) {
 		global.Redis.Set(ctx, cacheKey, bytes, 10*time.Minute)
 	}
 
-	fmt.Println(routes)
 	c.JSON(http.StatusOK, routes)
 }
 

@@ -18,6 +18,14 @@ import (
 
 type DocumentService struct{}
 
+func (s *DocumentService) GetUserMarkdownDocs(ownerID string) ([]database.User_Documents, error) {
+	var docs []database.User_Documents
+	err := global.DB.Where("doc_type = ? AND owner_id = ? AND status = ?", "md", ownerID, "active").
+		Order("updated_at desc").
+		Find(&docs).Error
+	return docs, err
+}
+
 func (documentService *DocumentService) CreateDocument(userUUID string, title, docType string) (*database.User_Documents, error) {
 	doc := database.User_Documents{
 		Title:   title,
